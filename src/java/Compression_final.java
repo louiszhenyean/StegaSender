@@ -1,98 +1,79 @@
 import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Random;
 import java.io.*;
 
 public class Compression_final 
 {
-    public static void Compress(String Path) 
-    {
-        // Folder Path of the input files to be compressed
-        // String Path = System.getenv("CATALINA_HOME") + "/work/";
-        System.out.println(Path);
 
-        // Prefix (name) of input file
-        String Pref1 = "input_db";
-        String Ext1 = "txt";
-        
-        // Folder Path of the output compressed files
-        String Path1 = Path;
-        
-        // Prefix (name) of output compressed files
-        String Pref2 = "compressed_db";
-        String Ext2 = "txt";
-
-        String Path2 = Path + Pref1 + "." + Ext1;
-        
+    public static void Compress(String Path) {
+        //Input file path
+        String Path1 = Path + "input_db.txt";
+        //output file path
+        String Path2 = Path + "compressed_db.txt";
         //operation for reading files and copying characters
         FileReading File = new FileReading();
         ArrayList File_Char = new ArrayList();
-        File_Char = File.FileTest(Path2);
+        File_Char = File.FileTest(Path1);
         String Compressed_String = "";
         String Compressed_String_Final = "";
         String CharStr = "";
-       
         //operation for elemiate the redundancy
         Redundancy_elemination red = new Redundancy_elemination();
         ArrayList nonRedundant_Char = new ArrayList();
         nonRedundant_Char = red.Redundant_eleminate(File_Char);
-        
         // Sorting the elements
         sort srt = new sort();
         ArrayList SortElement = new ArrayList();
         SortElement = srt.Sorting(nonRedundant_Char, File_Char);
-        
         //Encription using SDES
         SDES Enc = new SDES();
         ArrayList Encryption_SDES = new ArrayList();
         Encryption_SDES = Enc.Encryption(SortElement);
-        
         //Pattern String generation
         pattern Pat = new pattern();
         ArrayList PatternStr = new ArrayList();
         PatternStr = Pat.Pattern_generation(SortElement);
-        
         //concatenation of pattern string and encrypted string to generate security string
         ArrayList security_str = new ArrayList();
-        for (int i = 0; i < SortElement.size(); i++) 
-        {
+        for (int i = 0; i < SortElement.size(); i++) {
             String SecStr = ((String) Encryption_SDES.get(i)) + ((String) PatternStr.get(i));
             security_str.add(SecStr);
         }
-        
         //Addition of error checking information
         ErrorHandelling err = new ErrorHandelling();
         ArrayList ErrorCheck = new ArrayList();
         ErrorCheck = err.ErrorCheckInfo(security_str, Encryption_SDES, PatternStr);
-        
         //compressed string generation
         compression compStr = new compression();
         ArrayList CompressedStr = new ArrayList();
         CompressedStr = compStr.comppressedStr_Generation(File_Char, SortElement);
-        
         // Concatenation of compressed string into single string
         for (int i = 0; i < CompressedStr.size(); i++)
             Compressed_String = Compressed_String + CompressedStr.get(i);
-            
         //concatenation of error checking info
-        for (int i = 0; i < ErrorCheck.size(); i++) 
+        for (int i = 0; i < ErrorCheck.size(); i++) {
             CharStr = CharStr + ErrorCheck.get(i);
-        
+        }
+        //creation of separator
+        String Sep = "";
+        for (int i = 0; i < 101; i++)
+            Sep = Sep + "1";
         //creation of compressed string by concatenating error checking,separator and compressed strings 
-        Compressed_String_Final = CharStr + Compressed_String;
+        Compressed_String_Final = CharStr + Sep + Compressed_String + Sep;
         FileWriting FileWr = new FileWriting();
-        String Path3 = Path1 + Pref2 + "." + Ext2;
-        FileWr.FWriting(Compressed_String_Final, Path3);
-        System.out.println("File has been created ");
+        FileWr.FWriting(Compressed_String_Final, Path2);
+        System.out.println("Compressed File has been created ");
     }
 }
 
-class FileReading 
-{
+class FileReading {
     String textLine;
     ArrayList C1 = new ArrayList();
-    public ArrayList FileTest(String Path) 
-    {
-        try 
-        {
+    public ArrayList FileTest(String Path) {
+        try {
             //reading the input file
             FileReader fr = new FileReader(Path);
             BufferedReader reader = new BufferedReader(fr);
@@ -102,8 +83,7 @@ class FileReading
                 (textLine = reader.readLine()) != null; a.add(textLine));
             Object ia[] = a.toArray();
             //converting the file into character array
-            for (int i = 0; i < ia.length; i++) 
-            {
+            for (int i = 0; i < ia.length; i++) {
                 String s = (String) ia[i];
                 char ch[] = s.toCharArray();
                 store s1 = new store(ch, s);
@@ -111,20 +91,17 @@ class FileReading
             }
             int length = 0;
             Object ib[] = b.toArray();
-            for (int i = 0; i < ib.length; i++) 
-            {
+            for (int i = 0; i < ib.length; i++) {
                 store a1 = (store) ib[i];
                 length = length + a1.cpy() + 1;
             }
             char[] c1 = new char[length];
             int k = 0;
-            for (int i = 0; i < b.size(); i++) 
-            {
+            for (int i = 0; i < b.size(); i++) {
                 store a1 = (store) ib[i];
                 char[] temp = new char[a1.cpy()];
                 temp = a1.fun1();
-                for (int j = 0; j < a1.cpy(); j++) 
-                {
+                for (int j = 0; j < a1.cpy(); j++) {
                     if (k == (length - 1))
                         break;
                     else {
@@ -139,35 +116,25 @@ class FileReading
             }
             for (int i = 0; i < length; i++)
                 C1.add(c1[i]);
-        } 
-        
-        catch (IOException ioe) 
-        {
+        } catch (IOException ioe) {
             System.err.println(ioe);
             System.exit(1);
         }
         return C1;
     }
 }
-
-class store 
-{
+class store {
     char ch[];
     String st;
-    public store(char[] c, String s) 
-    {
+    public store(char[] c, String s) {
         ch = c;
         st = s;
     }
-    
-    public int cpy() 
-    {
+    public int cpy() {
         int length = ch.length;
         return (length);
     }
-    
-    public char[] fun1() 
-    {
+    public char[] fun1() {
         return ch;
     }
 }
@@ -722,22 +689,16 @@ class ErrorHandelling {
         return ErrChkStr;
     }
 }
-class FileWriting 
-{
-    public void FWriting(String CompStr, String Path4) 
-    {
-        try 
-        {
+class FileWriting {
+    public void FWriting(String CompStr, String Path4) {
+        try {
             // Create file
             FileWriter fstream = new FileWriter(Path4);
             BufferedWriter out = new BufferedWriter(fstream);
             out.write(CompStr);
             //Close the output stream
             out.close();
-        } 
-        
-        catch (Exception e) 
-        {   //Catch exception if any
+        } catch (Exception e) { //Catch exception if any
             System.err.println("Error: " + e.getMessage());
         }
     }
