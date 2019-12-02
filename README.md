@@ -1,5 +1,5 @@
 # StegaSender
-Compression and Audio Steganography for database query and forward to a HDFS  
+Data Compression and Data Hiding using Steganography for MySQL query and forward to a HDFS storage.  
 
 # Usage
 Run this Java Web App on a RDBMS  
