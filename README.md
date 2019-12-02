@@ -11,5 +11,6 @@ Data Compression and Data Hiding using Steganography for MySQL query and forward
 Run this Java Web Application on a RDBMS  
 
 # Requirements
-- Require user input .wav file  
+- TomCat, Java and MySQL is installed on the running machine  
+- Input .wav file is smaller than 64 MB  
 - Database Query has to be smaller than 64MB  
