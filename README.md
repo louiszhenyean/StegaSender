@@ -1,5 +1,5 @@
 # StegaSender
-Data Compression and Data Hiding using Steganography for MySQL query and forward to a HDFS storage.  
+Data Compression and Data Hiding using Audio Steganography for MySQL query and forward to a HDFS storage.  
 
 # How this works?
 1. User's input for .wav file, db name & query, HDFS destination IP & directory.    
